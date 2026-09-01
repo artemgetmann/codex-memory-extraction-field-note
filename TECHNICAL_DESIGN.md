@@ -115,6 +115,12 @@ The prototype merges complete chunk outputs deterministically into the same roll
 
 This merge preserves chunk outputs but does not perform semantic candidate deduplication or contradiction resolution. Those are separate memory quality problems.
 
+A private three-rollout live comparison tested this exact boundary. Raw deterministic merging matched
+the current head and tail baseline on the 28 predeclared facts, but produced 3.56 times more text and
+preserved obsolete intermediate states. The merged Stage 1 output should therefore be treated as
+complete input for consolidation, not as a useful final memory by itself. The experiment did not run
+Phase 2 because the candidate missed its predeclared Stage 1 quality gate.
+
 ## Coverage contract
 
 Phase 2 receives a rollout only when every leaf chunk is complete.
@@ -130,4 +136,3 @@ The central invariant is straightforward:
 ```text
 No missing source range can be reported as full success.
 ```
-

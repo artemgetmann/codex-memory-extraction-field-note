@@ -8,20 +8,20 @@ The final local branch was tested on upstream base commit:
 312b62ac95335e1762b70ceb8910374965bd2785
 ```
 
-The final prototype head was:
+The final local evaluation head was:
 
 ```text
-e1b0675477d5ec6144c56291031cd9eb4319a3a9
+27b30aca9
 ```
 
-All 418 targeted tests passed:
+All 421 active targeted tests passed:
 
 | Test suite | Passed | Failed |
 | --- | ---: | ---: |
-| `codex-memories-write` | 59 | 0 |
+| `codex-memories-write` | 62 | 0 |
 | `codex-state` | 187 | 0 |
 | `codex-api` | 172 | 0 |
-| Total | 418 | 0 |
+| Total | 421 | 0 |
 
 Repository checks also passed:
 
@@ -84,20 +84,62 @@ Observed behavior:
 3. The previous turn appeared as context only.
 4. Both Stage 1 outputs reached the existing Phase 2 input record.
 
+## Historical structural replay
+
+Two ignored, operator-invoked tests replayed naturally occurring local rollout shapes without a
+provider call or production memory database. They verified complete source-turn coverage, bounded
+chunk construction, checkpoint persistence, and resume after a forced failure. Transcript content
+was not printed, committed, or uploaded by these tests.
+
+A third ignored test exported the redacted baseline and candidate prompts for explicit operator
+review. It did not call a model.
+
+## Private live model comparison
+
+The follow-up quality check used three redacted historical technical rollouts. Ground truth was
+written before generation and contained 28 facts covering the head, middle, and tail. Critical facts
+counted twice.
+
+Protocol:
+
+- current head and tail Stage 1 prompt versus turn aligned bounded chunk prompts;
+- `gpt-5.6-luna` with low reasoning for every request;
+- 16 schema constrained calls, with zero retries and zero invalid outputs;
+- anonymous A and B scoring before the arm mapping was opened;
+- no production memory database and no Phase 2 call.
+
+Observed result:
+
+| Measure | Baseline | Bounded candidate |
+| --- | ---: | ---: |
+| Declared facts recovered | 28 of 28 | 28 of 28 |
+| Weighted fact score | 43 of 43 | 43 of 43 |
+| Weighted middle fact score | 21 of 21 | 21 of 21 |
+| Blinded usefulness wins | 3 of 3 | 0 of 3 |
+| Combined output characters | 28,516 | 101,559 |
+
+The candidate produced no recall win and was 3.56 times longer. Its deterministic merge preserved
+repeated intermediate states, including one rejected instruction beside its later correction. The
+predeclared stop rule therefore ended the experiment before Phase 2.
+
+Actual live usage was 2,098,105 input tokens, 47,360 cached input tokens, 33,109 output tokens, and
+1,750 reasoning output tokens across 16 completed calls. The input total includes the surrounding
+`codex exec` runtime instructions and is therefore larger than the prompt only estimate.
+
 ## Exact proof limits
 
-The tests use synthetic conversations, mock model streams, and temporary Codex homes.
+The reliability tests use synthetic conversations, mock model streams, and temporary Codex homes.
+The historical structural replay and private quality comparison close part of that ecological gap,
+but the sample is deliberately small.
 
 They do not prove:
 
-- behavior on a real user's rollout history;
 - migration behavior on a real user's memory database;
-- live provider model quality;
+- general live provider model quality beyond three redacted conversations and one model;
 - exact tokenizer accounting;
 - production cost, latency, throughput, or rate limit behavior;
 - installed Codex desktop behavior;
-- semantic memory precision or recall;
+- general semantic memory precision or recall beyond this small sample;
 - semantic deduplication, contradiction resolution, confidence, or long term ranking.
 
 The test result supports the local reliability design and its state transitions. It is not a production benchmark.
-
