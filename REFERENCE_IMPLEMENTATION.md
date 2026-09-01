@@ -10,17 +10,17 @@ Upstream base:
 312b62ac95335e1762b70ceb8910374965bd2785
 ```
 
-Local prototype head:
+Local evaluation head:
 
 ```text
-e1b0675477d5ec6144c56291031cd9eb4319a3a9
+27b30aca9
 ```
 
 Diff size:
 
 ```text
-21 files changed
-3,882 insertions
+23 files changed
+4,541 insertions
 86 deletions
 ```
 
@@ -34,6 +34,8 @@ Diff size:
 | `c75230fdd` | Run checkpointed extraction with adaptive overflow splitting. |
 | `132a2009b` | Cover the complete Stage 1 lifecycle with synthetic startup tests. |
 | `e1b067547` | Close empty plan, coverage reporting, and request cap gaps. |
+| `98c6feb8c` | Replay historical rollout shapes for coverage and restart behavior. |
+| `27b30aca9` | Export redacted baseline and bounded prompts for blinded quality testing. |
 
 ## Changed areas
 
@@ -73,6 +75,8 @@ Stores chunk plans, source digests, status, outputs, overflow ancestry, and cove
 ```text
 codex-rs/memories/write/src/stage1_chunks_tests.rs
 codex-rs/memories/write/src/startup_tests.rs
+codex-rs/memories/write/src/startup_tests/historical_rollout_tests.rs
+codex-rs/memories/write/src/startup_tests/memory_quality_eval.rs
 codex-rs/state/src/runtime/memory_chunks_tests.rs
 codex-rs/codex-api/src/api_bridge_tests.rs
 ```
@@ -81,7 +85,7 @@ Covers planner behavior, synthetic startup flow, restart persistence, failure vi
 
 ## Why patches are not included initially
 
-The Codex contribution guide does not accept external code contributions or pull requests. Publishing a 3,882 line patch dump would make this field note harder to inspect and could look like an attempt to route around that policy.
+The Codex contribution guide does not accept external code contributions or pull requests. Publishing a 4,541 line patch dump would make this field note harder to inspect and could look like an attempt to route around that policy.
 
 The initial artifact therefore includes:
 
@@ -92,4 +96,3 @@ The initial artifact therefore includes:
 - exact proof limitations.
 
 Sanitized patches remain available locally. If a Codex maintainer asks for them, publish them as a versioned appendix pinned to the exact upstream base and carrying the required Apache 2.0 attribution and notices.
-

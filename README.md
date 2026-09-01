@@ -61,26 +61,38 @@ flowchart LR
 
 ## Evidence
 
-The local branch contains six focused commits based on upstream commit `312b62ac95335e1762b70ceb8910374965bd2785`.
+The local branch contains eight focused commits based on upstream commit `312b62ac95335e1762b70ceb8910374965bd2785`.
 
-All 418 targeted tests passed:
+All 421 active targeted tests passed:
 
 | Crate | Result |
 | --- | ---: |
-| `codex-memories-write` | 59 of 59 |
+| `codex-memories-write` | 62 of 62 |
 | `codex-state` | 187 of 187 |
 | `codex-api` | 172 of 172 |
 
 One synthetic end to end case used a 200,000 byte conversation with a correction in the middle. It produced two bounded Stage 1 requests. The second request retained the correction and marked the previous turn as context only. Both outputs reached the existing Phase 2 input path.
 
+A private follow-up used three redacted historical Codex conversations and 16 live model calls. The
+current head and tail baseline and the bounded candidate both recovered all 28 predeclared facts.
+The candidate therefore won zero recall comparisons. Its raw merged output was 3.56 times longer
+and lost all three blinded usefulness comparisons because it preserved repeated, obsolete progress
+states beside the final outcome.
+
+That result narrows the claim. The prototype improves coverage and restart reliability. This small
+test did not show that deterministic Stage 1 chunk merging produces better memories. Phase 2 was not
+run because the candidate missed the predeclared Stage 1 gate.
+
 See [TEST_EVIDENCE.md](TEST_EVIDENCE.md) for the test matrix and proof limits.
 
 ## What this does not prove
 
-- No real conversation or real user memory database was used.
-- Model responses were mocked.
+- The 421 reliability tests use mock model streams. The separate live comparison used only three
+  redacted historical conversations, one model, one run per prompt, and human scoring.
+- No production user memory database was used.
 - Token counts use Codex's byte based estimate, not the selected model's exact tokenizer.
-- The work does not measure production cost, latency, throughput, or model quality.
+- The live comparison recorded request usage and latency, but it is not a production cost,
+  throughput, or quality benchmark.
 - It does not prove installed Codex desktop behavior.
 - It does not implement semantic deduplication, contradiction resolution, confidence scoring, or long term memory ranking.
 
@@ -90,7 +102,7 @@ This is a tested reliability design. It is not a production readiness claim.
 
 The implementation remains local. The [Codex contribution policy](https://github.com/openai/codex/blob/main/docs/contributing.md) does not accept external code contributions or pull requests, so this repository presents the problem, design, and test evidence instead of pretending to be an upstream patch.
 
-The six commit structure and changed path map are documented in [REFERENCE_IMPLEMENTATION.md](REFERENCE_IMPLEMENTATION.md). Sanitized patches can be prepared if a Codex maintainer asks to inspect them.
+The eight commit structure and changed path map are documented in [REFERENCE_IMPLEMENTATION.md](REFERENCE_IMPLEMENTATION.md). Sanitized patches can be prepared if a Codex maintainer asks to inspect them.
 
 ## Public discussion
 
@@ -98,4 +110,3 @@ The six commit structure and changed path map are documented in [REFERENCE_IMPLE
 - [Published design and test comment](https://github.com/openai/codex/issues/38860#issuecomment-5365441023)
 - [Technical design](TECHNICAL_DESIGN.md)
 - [Attribution and reuse](ATTRIBUTION.md)
-
